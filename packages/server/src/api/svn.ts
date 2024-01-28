@@ -77,6 +77,7 @@ svn_router.get("/list", async (req: Request, res: Response) => {
     
     console.log(output);
     var repo_list = output.split("\n");
+    console.log(repo_list);
     for(var repo of repo_list)
     {
       if(repo === "") continue;
