@@ -8,7 +8,7 @@ $ yarn add pkg-name@4.2.1 -W
 yarn workspace @svn-admin/client axios
 
 패키지에 의존성 추가하기
-[A패키지를 B에서 사용하는 경우]
+[A패키지를 B에서 사용하는 경우]z
 $ yarn workspace B add A
 
 yarn workspace client dev
