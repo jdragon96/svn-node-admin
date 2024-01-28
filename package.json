@@ -1,0 +1,16 @@
+{
+  "name": "svn-admin",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": "true",
+  "workspaces": [
+    "packages/client",
+    "packages/server"
+  ],
+  "scripts": {
+    "dev:client": "yarn workspace @svn-admin/client dev",
+    "dev:server": "yarn workspace @svn-admin/server dev",
+    "dev": "concurrently -k \"yarn dev:client\" \"yarn dev:server\" "
+  }
+}
