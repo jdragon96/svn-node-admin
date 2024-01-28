@@ -52,6 +52,12 @@ svn_router.get("/create", async (req: Request, res: Response) => {
 
 interface svn_list_request{
 }
+interface repository{
+  name: string
+}
+interface svn_list_response{
+  repostiories: repository[]
+}
 svn_router.get("/list", async (req: Request, res: Response) => {
   var command = "ls " + svn_root_path;
 
@@ -64,16 +70,21 @@ svn_router.get("/list", async (req: Request, res: Response) => {
       query: ""
     }
     
+    var packet: svn_list_response = 
+    {
+      repostiories: []
+    }
+
     var repo_list = output.split("\n");
-    var resositories = [];
     for(var repo of repo_list)
     {
       if(repo === "") continue;
-      resositories.push(repo);
+      packet.repostiories.push({
+        name: repo
+      });
     }
-
-    hb_response.query = JSON.stringify(resositories)
-
+    
+    hb_response.query = JSON.stringify(packet)
     res.send(hb_response);
   });
 });

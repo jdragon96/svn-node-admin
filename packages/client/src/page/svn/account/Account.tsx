@@ -48,7 +48,7 @@ export const Account = () => {
 
 
     var repo_list = await API.svn_repository_list();
-    console.log(repo_list.query);
+    console.log(JSON.parse(repo_list.query));
   }
   
   // 새로운 계정을 생성한다.
