@@ -72,6 +72,8 @@ svn_router.get("/list", async (req: Request, res: Response) => {
       resositories.push(repo);
     }
 
-    res.send(JSON.stringify(resositories));
+    hb_response.query = JSON.stringify(resositories)
+
+    res.send(hb_response);
   });
 });
