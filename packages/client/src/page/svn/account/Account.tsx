@@ -42,6 +42,9 @@ export const Account = () => {
   const test = async () => {
     var res = await API.svn_heartbeat();
     console.log(res);
+
+    var items = res.query.split("\n");
+    console.log(items);
   }
   
   // 새로운 계정을 생성한다.

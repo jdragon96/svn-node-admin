@@ -21,6 +21,17 @@ yarn 구축방법
 
 
 SVN
-$ svnserve -d -r /home/ubuntu --listen-port 5335
+$ svnserve -d -r /home/ubuntu/repo --listen-port 5335
 
 $ ps -ef | grep svn | grep -v grep
+
+/etc/sysconfig/svnserve 파일 확인
+$ cat /etc/sysconfig/svnserve
+# OPTIONS is used to pass command-line arguments to svnserve.
+# 
+# Specify the repository location in -r parameter:
+OPTIONS="-r /var/svn"
+
+
+/etc/sysconfig/svnserve 파일 수정 
+OPTIONS="--threads -r /home/svn --listen-port 5335"
