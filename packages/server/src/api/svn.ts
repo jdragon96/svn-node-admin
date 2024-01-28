@@ -74,7 +74,8 @@ svn_router.get("/list", async (req: Request, res: Response) => {
     {
       repostiories: []
     }
-
+    
+    console.log(output);
     var repo_list = output.split("\n");
     for(var repo of repo_list)
     {
@@ -83,7 +84,7 @@ svn_router.get("/list", async (req: Request, res: Response) => {
         name: repo
       });
     }
-    
+
     hb_response.query = JSON.stringify(packet)
     res.send(hb_response);
   });
