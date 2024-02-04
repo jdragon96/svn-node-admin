@@ -2,9 +2,12 @@ import * as Layout from "@/page/layout/MainLayout";
 import * as Style from "@/shared/theme/LayoutStyle";
 import * as Theme from "@/shared/theme/createMyTheme";
 import * as SystemModel from "@/shared/model/SystemModel";
-import * as API from "@/interface/svn.api"
+import * as API from "@/interface/svn.api";
+import * as MyListView from "@/shared/component";
+import { GradientButton } from "@/shared/component";
+import { DarkTitleBar } from "@/shared/component";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Stack,
   Grid,
@@ -23,32 +26,31 @@ const CenterAlignBox = styled(Box)(({ theme }) => ({
   justifyContent: 'center'
 }));
 
-const GradientButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.text.primary,
-  border: '0px solid',
-  borderColor: '#0a85ff',
-  background: 'linear-gradient(to right top, #7d00ff, #0010ff)',
-  marginBottom: '5px',
-  borderRadius: '8px',
-  fontSize: '24px'
-}));
 
 export const Account = () => {
+  //! 저장소 목록
+  const [repoList, setRepoList] = useState<string[]>([]);
+  //! 현재 선택된 저장소
+  const [selectedRepo, setSelectedRepo] = useState<string>("");
 
   useEffect(() => {
     test();
+    setRepoList(["Repository1", "Repository2", "DDS"]);
   }, [])
 
   const test = async () => {
     var res = await API.svn_heartbeat();
-    console.log(res);
-
-    var items = res.query.split("\n");
-    console.log(items);
-
+    if(res !== null)
+    {
+      var items = res.data.query.split("\n");
+      console.log(items);
+    }    
 
     var repo_list = await API.svn_repository_list();
-    console.log(JSON.parse(repo_list.query));
+    if(repo_list !== null)
+    {
+      console.log(JSON.parse(repo_list.data.query));
+    }
   }
   
   // 새로운 계정을 생성한다.
@@ -56,20 +58,55 @@ export const Account = () => {
 
   }
 
+  //! 새로운 계정을 등록한다.
   const onCreateNewAccount = () => {
+    console.log("[Account] 새 계정 등록 버튼 클릭");
+  }
 
+  const onSelectRepository = (selectedRepo: string) => {
+    console.log(`[Account] 현재 선택된 매뉴 : ${selectedRepo}`);
+    setSelectedRepo(selectedRepo);
   }
 
   return (
     <>
-      <Grid container columnSpacing={1} xs={12}>
-        <Grid item xs={2}>
-          <CenterAlignBox height={'120px'}>
-            <GradientButton onClick={onCreateNewAccount} fullWidth sx={{fontSize: '40px'}}>+</GradientButton>
+      <Grid container columnSpacing={1} xs={12} height={"100%"}>
+        {/* 저장소 목록 리스트 및 추가버튼 */}
+        <Grid item sx={{width: "200px"}}>
+          <CenterAlignBox sx={{height: "80px"}}>
+            <GradientButton 
+              fullWidth
+              onClick={onCreateNewAccount} 
+              sx={{fontSize: '40px'}}>
+                +
+            </GradientButton>
           </CenterAlignBox>
-          <Typography>
-            Test
-          </Typography>
+          <Grid item sx={{paddingTop: "8px", height: "100%"}}>
+            <MyListView.DarkListView
+              items={repoList}
+              itemSelectCallback={onSelectRepository}/>
+          </Grid>
+        </Grid>
+        
+        <Grid item xs>
+          <Grid container xs={12} sx={{height: "100%"}}>
+            {/* 상단 타이틀바 */}
+            <Grid item xs={12}>
+              <DarkTitleBar
+                buttonSize="80px"
+                buttonFontSize="12px"
+                selectedRepository={selectedRepo}/>
+            </Grid>
+
+            {/* 저장소 세부 정보창 */}
+            <Grid container xs={12} sx={{paddingTop: "8px", height: "100%"}}>
+              <Grid item xs={12} sx={{background: "#000000", width: "100%", height: "100%"}}>
+                <Typography>
+                  Test
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </>
