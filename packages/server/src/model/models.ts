@@ -20,3 +20,16 @@ export interface repository{
 export interface svn_list_response{
   repostiories: repository[]
 }
+
+export interface svn_account_request
+{
+  repository_name: string
+}
+export interface account{
+  id: string
+  password: string
+}
+export interface svn_account_response
+{
+  accounts: account[]
+}

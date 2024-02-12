@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import * as process from "child_process";
 import * as Model from "../model/models"
+import * as SvnModule from "../module/svn_module";
 
 const create_default_packet = <T>(flag: boolean, msg: string, body: T) => {
   var result: Model.response_packet<T> = 
@@ -91,6 +92,29 @@ svn_router.get("/list", async (req: Request, res: Response) => {
       packet.repostiories.push({
         name: repo
       });
+    }
+
+    // serialization
+    response.body = JSON.stringify(packet)
+    res.send(response);
+  });
+});
+
+//! get account list
+svn_router.get("/account", async (req: Request, res: Response) => {
+  var query: Model.svn_account_request = JSON.parse(JSON.stringify(req.query));
+  var command = "cat " + 
+                svn_root_path + 
+                "/" + 
+                query.repository_name + 
+                "/conf/passwd";
+
+  var p = await process.exec(command, async(err, output) => 
+  {
+    var response = create_default_packet<string>(err ? true : false, output, output);
+    var packet: Model.svn_account_response = 
+    {
+      accounts: await SvnModule.parsing_svn_accounts(output)
     }
 
     // serialization
