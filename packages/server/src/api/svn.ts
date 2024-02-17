@@ -142,6 +142,7 @@ svn_router.post("/account", async (req: Request, res: Response) => {
   var account_list: Model.account[] = [];
   var p = await process.exec(command, async(err, output) => 
   {
+    console.log(`Repository list : ${output}`);
     account_list = await SvnModule.parsing_svn_accounts(output);
   });
   console.log(`조회 완료 - ${account_list.length}`);
