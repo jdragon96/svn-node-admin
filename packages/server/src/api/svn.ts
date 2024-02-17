@@ -124,6 +124,8 @@ svn_router.get("/account", async (req: Request, res: Response) => {
 //! add new account
 svn_router.post("/account", async (req: Request, res: Response) => {
   var query: Model.add_acount_request = req.body;
+  console.log(`body : ${req.body}`);
+  console.log(`query : ${req.query}`);
   var command = "cat " + 
                 svn_root_path + 
                 "/" + 
