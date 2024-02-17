@@ -30,7 +30,7 @@ const CenterAlignBox = styled(Box)(({ theme }) => ({
 
 export const Account = () => {
   //! 저장소 목록
-  const [repoList, setRepoList] = useState<string[]>([]);
+  const [repoList, setRepoList] = useState<Model.repository[]>([]);
   //! 현재 선택된 저장소
   const [selectedRepo, setSelectedRepo] = useState<string>("");
 
@@ -43,7 +43,8 @@ export const Account = () => {
     var repo_list = await API.svn_repository_list();
     if(repo_list !== null)
     {
-      // console.log(JSON.parse());
+      console.log(`저장소 목록 조회: ${repo_list}`);
+      setRepoList(repo_list.body.repostiories);
     }
   }
   
@@ -76,9 +77,26 @@ export const Account = () => {
             </GradientButton>
           </CenterAlignBox>
           <Grid item sx={{paddingTop: "8px", height: "100%"}}>
-            <MyListView.DarkListView
-              items={repoList}
-              itemSelectCallback={onSelectRepository}/>
+            <List
+            sx={
+              {
+                background: "#000000",
+                height: "100%",
+                borderRadius: "2px"
+              }}>
+              {
+                repoList.map((item: Model.repository, index: number) => 
+                {
+                  return (
+                    <ListItem>
+                      <ListItemButton onClick={(e) => onSelectRepository(item.name)}>
+                        {item.name}
+                      </ListItemButton>
+                    </ListItem>
+                  )
+                })
+              }
+            </List>
           </Grid>
         </Grid>
         

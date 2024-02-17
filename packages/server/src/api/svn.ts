@@ -84,11 +84,10 @@ svn_router.get("/list", async (req: Request, res: Response) => {
       message: "success",
       body: await SvnModule.search_svn_repository_list(output)
     }
+    console.log(output);
 
     res.send(JSON.stringify(response));
   });
-
-  p.kill();
 });
 
 //! get account list
@@ -114,6 +113,4 @@ svn_router.get("/account", async (req: Request, res: Response) => {
     // serialization
     res.send(JSON.stringify(response));
   });
-
-  p.kill();
 });

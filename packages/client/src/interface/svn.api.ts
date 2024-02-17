@@ -29,10 +29,10 @@ export const svn_heartbeat = async (): ApiType => {
 }
 
 export const svn_repository_list = async (): Promise<Model.response_packet<Model.svn_list_response>> => {
-  var response: AxiosResponse | null = null;
+  var response: Model.response_packet<Model.svn_list_response> | null = null;
   try{
-    response = await axios.get(mysvn("/svn/list"));
-
+    var responseString = await axios.get(mysvn("/svn/list"));
+    response = JSON.parse(responseString.data);
   }
   catch(err)
   {
