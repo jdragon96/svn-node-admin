@@ -160,7 +160,7 @@ svn_router.post("/account", async (req: Request, res: Response) => {
 
   // 3. 추가
   // 반드시 passwd가 chmod 777로 설정되어야 함
-  command = `echo "${query.id}=${query.password}" > tee -a ${svn_root_path}/${query.repository_name}/conf/passwd`;
+  command = `echo "${query.id}=${query.password}" | tee -a ${svn_root_path}/${query.repository_name}/conf/passwd`;
   console.log(command);
   p = await process.exec(command, async(err, output) => 
   {
