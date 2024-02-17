@@ -38,3 +38,4 @@ OPTIONS="--threads -r /home/svn --listen-port 5335"
 
 
 yarn workspace @svn-admin/client add @svn-admin/shared@1.0.0
+yarn workspace @svn-admin/server add @svn-admin/shared@1.0.0

@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import * as process from "child_process";
-import * as Model from "../../../shared/model/models"
+// import * as Model from "../../../shared/model/models"
+import {Model} from "@svn-admin/shared";
 import * as SvnModule from "../module/svn_module";
 
 const create_default_packet = <T>(flag: boolean, msg: string, body: T) => {
