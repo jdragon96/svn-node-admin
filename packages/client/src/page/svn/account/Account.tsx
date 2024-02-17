@@ -6,7 +6,8 @@ import * as API from "@/interface/svn.api";
 import * as MyListView from "@/shared/component";
 import { GradientButton } from "@/shared/component";
 import { DarkTitleBar } from "@/shared/component";
-import {Model} from "@svn-admin/shared"
+import {Model} from "@svn-admin/shared";
+import * as Impl from "./Impl";
 
 import { useEffect, useState } from "react";
 import {
@@ -18,11 +19,18 @@ import {
   Typography,
   ListItemButton,
   ListItem,
-  IconButton
+  IconButton,
+  TextField
 } from '@mui/material';
 import { styled } from '@mui/material';
+import React = require("react");
 
 const CenterAlignBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center'
+}));
+
+const BlackTextField = styled(TextField)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center'
 }));
@@ -33,6 +41,11 @@ export const Account = () => {
   const [repoList, setRepoList] = useState<Model.repository[]>([]);
   //! 현재 선택된 저장소
   const [selectedRepo, setSelectedRepo] = useState<string>("");
+  //! 저장소 내 계정 목록
+  const [accountList, setAccountList] = useState<Model.account[]>([]);
+  //! 새로 등록할 계정
+  const [newID, setNewID] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
 
   useEffect(() => {
     Initialize();
@@ -53,14 +66,49 @@ export const Account = () => {
 
   }
 
-  //! 새로운 계정을 등록한다.
-  const onCreateNewAccount = () => {
+  const onCreateNewRepository = async() => {
     console.log("[Account] 새 계정 등록 버튼 클릭");
+    // TODO: 팝업창 띄우고, 새 저장소 등록
   }
 
-  const onSelectRepository = (selectedRepo: string) => {
-    console.log(`[Account] 현재 선택된 매뉴 : ${selectedRepo}`);
-    setSelectedRepo(selectedRepo);
+  //! 새로운 계정을 등록한다.
+  const onCreateNewAccount = async() => {
+    // 1. 유효성 체크
+    var validation = Impl.check_account_validation(newID, newPassword);
+    if(!validation.is_success)
+    {
+      //TODO: 토스트 메세지 출력하기
+    }
+
+    // 2. API 호출
+    var result = await API.add_new_account(
+      {
+        repository_name: selectedRepo,
+        id: newID, 
+        password: newPassword
+      });
+    if(result !== null)
+    {
+      if(result.is_success)
+      {
+        setAccountList(result.body.accounts);
+      }
+    }
+  }
+
+  const onSelectRepository = async(repo: string) => {
+    console.log(`[Account] 현재 선택된 매뉴 : ${repo}`);
+    setSelectedRepo(repo);
+    var accountList = await API.get_account_list({repository_name: repo});
+    if(accountList !== null)
+    {
+      console.log(`계정 목록 : ${accountList.body.accounts}, 계정 개수 : ${accountList.body.accounts.length}`);
+      accountList.body.accounts.forEach((value, index) => 
+      {
+        console.log(`${value.id} / ${value.password}`);
+        setAccountList(accountList.body.accounts);
+      })
+    }
   }
 
   return (
@@ -71,12 +119,12 @@ export const Account = () => {
           <CenterAlignBox sx={{height: "80px"}}>
             <GradientButton 
               fullWidth
-              onClick={onCreateNewAccount} 
+              onClick={onCreateNewRepository} 
               sx={{fontSize: '40px'}}>
                 +
             </GradientButton>
           </CenterAlignBox>
-          <Grid item sx={{paddingTop: "8px", height: "100%"}}>
+          <Grid item xs sx={{paddingTop: "8px", height: "100%"}}>
             <List
             sx={
               {
@@ -101,7 +149,7 @@ export const Account = () => {
         </Grid>
         
         <Grid item xs>
-          <Grid container xs={12} sx={{height: "100%"}}>
+          <Grid container sx={{height: "100%"}}>
             {/* 상단 타이틀바 */}
             <Grid item xs={12}>
               <DarkTitleBar
@@ -111,11 +159,70 @@ export const Account = () => {
             </Grid>
 
             {/* 저장소 세부 정보창 */}
-            <Grid container xs={12} sx={{paddingTop: "8px", height: "100%"}}>
+            <Grid container sx={{paddingTop: "8px", height: "100%"}}>
               <Grid item xs={12} sx={{background: "#000000", width: "100%", height: "100%"}}>
-                <Typography>
-                  Test
-                </Typography>
+                {/* 계정 목록 */}
+                <Grid item>
+                  <Typography
+                    sx={{fontSize: "18px"}}>
+                    계정 설정
+                  </Typography>
+                  <Grid container xs={12}>
+                    <Grid item xs>
+                      <BlackTextField
+                        hiddenLabel
+                        id="new-id"
+                        // variant="standard"
+                        label="ID"
+                        margin="dense"
+                        value={newID}
+                        onChange={(e) => setNewID(e.target.value)}/>
+                      <BlackTextField
+                        hiddenLabel
+                        id="new-id"
+                        // variant="standard"
+                        label="Password"
+                        margin="dense"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}/>
+                    </Grid>
+                    <Grid item
+                      direction="column"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center">
+                      <GradientButton 
+                        fullWidth
+                        onClick={onCreateNewAccount} 
+                        sx={{fontSize: '14px', width: "120px", height: "120px", margin: "8px"}}>
+                          계정 추가
+                      </GradientButton>
+                    </Grid>
+                  </Grid>
+                  <List
+                    sx={
+                      {
+                        background: "#000000",
+                        height: "100%",
+                        borderRadius: "2px"
+                      }}>
+                      {
+                        accountList.map((item: Model.account, index: number) => 
+                        {
+                          return (
+                            <ListItem>
+                              <Typography>
+                                {item.id}
+                              </Typography>
+                              <Typography>
+                                {item.password}
+                              </Typography>
+                            </ListItem>
+                          )
+                        })
+                      }
+                    </List>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>

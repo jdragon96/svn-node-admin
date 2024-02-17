@@ -33,3 +33,11 @@ export interface svn_account_response
 {
   accounts: account[]
 }
+
+//! SVN 저장소에 계정을 추가한다.
+export interface add_acount_request
+{
+  repository_name: string
+  id: string
+  password: string
+}

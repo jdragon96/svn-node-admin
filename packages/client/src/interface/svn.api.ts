@@ -29,15 +29,34 @@ export const svn_heartbeat = async (): ApiType => {
 }
 
 export const svn_repository_list = async (): Promise<Model.response_packet<Model.svn_list_response>> => {
-  var response: Model.response_packet<Model.svn_list_response> | null = null;
   try{
-    var responseString = await axios.get(mysvn("/svn/list"));
-    response = JSON.parse(responseString.data);
+    var response = await axios.get(mysvn("/svn/list"));
+    return response.data;
   }
   catch(err)
   {
     // ERROR 
-    response = null;
+    return null;
   }
-  return response;
+}
+
+export const get_account_list = async(req: Model.svn_account_request): Promise<Model.response_packet<Model.svn_account_response>> => {
+  try{
+    var response = await axios.get(mysvn(`/svn/account?repository_name=${req.repository_name}`));
+    return response.data;
+  }
+  catch(err){
+
+  }
+  return null;
+}
+
+export const add_new_account = async(req: Model.add_acount_request): Promise<Model.response_packet<Model.svn_account_response>> => {
+  try{
+
+  }
+  catch(err){
+
+  }
+  return null;
 }

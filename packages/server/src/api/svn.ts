@@ -14,6 +14,10 @@ const create_default_packet = <T>(flag: boolean, msg: string, body: T) => {
   return result;
 }
 
+const print_packet = (packet: any) => {
+  console.log(packet);
+}
+
 export const svn_router = express.Router();
 
 const svn_root_path = "/home/svn";
@@ -111,7 +115,55 @@ svn_router.get("/account", async (req: Request, res: Response) => {
         accounts: await SvnModule.parsing_svn_accounts(output)
       }
     };
+    console.log(response);
     // serialization
     res.send(JSON.stringify(response));
   });
+});
+
+//! add new account
+svn_router.post("/account", async (req: Request, res: Response) => {
+  var query: Model.add_acount_request = req.body;
+  var command = "cat " + 
+                svn_root_path + 
+                "/" + 
+                query.repository_name + 
+                "/conf/passwd";
+  var response: Model.response_packet<Model.svn_account_response> = 
+  {
+    is_success: true,
+    message: "success",
+    body: {accounts: []}
+  }
+
+  // 1. 기존 계정 목록을 조회한다.
+  var account_list: Model.account[] = [];
+  var p = await process.exec(command, async(err, output) => 
+  {
+    account_list = await SvnModule.parsing_svn_accounts(output);
+  });
+
+  // 2. 중복체크를 한다.
+  for(var account of account_list)
+  {
+    if(account.id == query.id)
+    {
+      response.is_success = false;
+      response.message = "already exist account";
+    }
+  }
+
+  // 3. 추가
+  // 반드시 passwd가 chmod 777로 설정되어야 함
+  command = `echo "${query.id}=${query.password}" > tee -a ${svn_root_path}/${query.repository_name}/conf/passwd`;
+  p = await process.exec(command, async(err, output) => 
+  {
+    if(err)
+    {
+      response.is_success = false;
+      response.message = "fail to insert id...";
+    }
+  });
+  
+  res.send(JSON.stringify(response));
 });

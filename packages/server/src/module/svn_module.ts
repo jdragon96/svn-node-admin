@@ -32,8 +32,8 @@ export const parsing_svn_accounts = async(parsing_str: string): Promise<Model.ac
     if(id_and_password.length !== 2) continue;
     result.push(
       {
-        id: id_and_password[0],
-        password: id_and_password[1]
+        id: id_and_password[0].replace(" ", ""),
+        password: id_and_password[1].replace(" ", "")
       }
     )
   }
