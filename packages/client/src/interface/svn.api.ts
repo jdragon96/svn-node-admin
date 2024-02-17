@@ -31,6 +31,7 @@ export const svn_heartbeat = async (): ApiType => {
 export const svn_repository_list = async (): Promise<Model.response_packet<Model.svn_list_response>> => {
   try{
     var response = await axios.get(mysvn("/svn/list"));
+    console.log(response.data);
     return response.data;
   }
   catch(err)
@@ -53,7 +54,9 @@ export const get_account_list = async(req: Model.svn_account_request): Promise<M
 
 export const add_new_account = async(req: Model.add_acount_request): Promise<Model.response_packet<Model.svn_account_response>> => {
   try{
-
+    console.log(req);
+    var response = await axios.post(mysvn("/svn/account"), req);
+    return response.data;
   }
   catch(err){
 

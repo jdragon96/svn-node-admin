@@ -23,8 +23,8 @@ export const svn_router = express.Router();
 const svn_root_path = "/home/svn";
 
 svn_router.use("/", (req: Request, res: Response, next: NextFunction) => {
-  console.log('Time: ', Date.now())
-  console.log(`${req.url} => ${JSON.stringify(req.query)}`);
+  console.log(`[${Date.now().toLocaleString()}] ${req.url}`)
+  // console.log(`${req.url} => ${JSON.stringify(req.query)}`);
   next()
 });
 
