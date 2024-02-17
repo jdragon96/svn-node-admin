@@ -144,13 +144,13 @@ svn_router.post("/account", async (req: Request, res: Response) => {
   {
     account_list = await SvnModule.parsing_svn_accounts(output);
   });
-  console.log("조회 완료");
+  console.log(`조회 완료 - ${account_list.length}`);
 
   // 2. 중복체크를 한다.
   for(var account of account_list)
   {
-    console.log(account);
-    if(account.id == query.id)
+    console.log(account.id);
+    if(account.id === query.id)
     {
       console.log("중복 아이디 조회");
       response.is_success = false;
