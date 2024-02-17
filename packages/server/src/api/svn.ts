@@ -154,6 +154,7 @@ svn_router.post("/account", async (req: Request, res: Response) => {
         response.is_success = false;
         response.message = "already exist account";
         res.send(JSON.stringify(response));
+        return;
       }
     }
 
