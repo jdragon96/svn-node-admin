@@ -148,6 +148,7 @@ svn_router.post("/account", async (req: Request, res: Response) => {
   // 2. 중복체크를 한다.
   for(var account of account_list)
   {
+    console.log(account);
     if(account.id == query.id)
     {
       response.is_success = false;
@@ -162,6 +163,7 @@ svn_router.post("/account", async (req: Request, res: Response) => {
   {
     if(err)
     {
+      console.log(`3 ${err.message}`);
       response.is_success = false;
       response.message = "fail to insert id...";
     }
