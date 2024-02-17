@@ -19,7 +19,8 @@
     "webpack-dev-server": "^4.15.1"
   },
   "scripts": {
-    "dev": "webpack serve",
+    "dev_origin": "webpack serve",
+    "dev": "webpack-dev-server --hot --config webpack.config.js",
     "build": "webpack --mode=production  --progress",
     "start": "webpack --mode=development  --progress"
   },
@@ -28,6 +29,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.4",
     "@mui/material": "^5.15.4",
+    "@svn-admin/shared": "1.0.0",
     "axios": "^1.6.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

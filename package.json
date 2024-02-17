@@ -6,7 +6,8 @@
   "private": "true",
   "workspaces": [
     "packages/client",
-    "packages/server"
+    "packages/server",
+    "packages/shared"
   ],
   "scripts": {
     "dev:client": "yarn workspace @svn-admin/client dev",

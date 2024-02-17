@@ -1,6 +1,6 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import * as process from "child_process";
-import * as Model from "../model/models"
+import * as Model from "../../../shared/model/models"
 import * as SvnModule from "../module/svn_module";
 
 const create_default_packet = <T>(flag: boolean, msg: string, body: T) => {
@@ -76,28 +76,19 @@ svn_router.get("/create", async (req: Request, res: Response) => {
 svn_router.get("/list", async (req: Request, res: Response) => {
   var command = "ls " + svn_root_path;
 
-  var p = await process.exec(command, (err, output) => 
+  var p = await process.exec(command, async(err, output: string) => 
   {
-    var response = create_default_packet<string>(err ? true : false, output, output);
-    var packet: Model.svn_list_response = 
+    var response: Model.response_packet<Model.svn_list_response> = 
     {
-      repostiories: []
+      is_success: true,
+      message: "success",
+      body: await SvnModule.search_svn_repository_list(output)
     }
 
-    // delete last word
-    var repo_list = output.split("\n");
-    for(var repo of repo_list)
-    {
-      if(repo === "") continue;
-      packet.repostiories.push({
-        name: repo
-      });
-    }
-
-    // serialization
-    response.body = JSON.stringify(packet)
-    res.send(response);
+    res.send(JSON.stringify(response));
   });
+
+  p.kill();
 });
 
 //! get account list
@@ -111,14 +102,18 @@ svn_router.get("/account", async (req: Request, res: Response) => {
 
   var p = await process.exec(command, async(err, output) => 
   {
-    var response = create_default_packet<string>(err ? true : false, output, output);
-    var packet: Model.svn_account_response = 
+    var response: Model.response_packet<Model.svn_account_response> = 
     {
-      accounts: await SvnModule.parsing_svn_accounts(output)
-    }
-
+      is_success: true,
+      message: "success",
+      body:
+      {
+        accounts: await SvnModule.parsing_svn_accounts(output)
+      }
+    };
     // serialization
-    response.body = JSON.stringify(packet)
-    res.send(response);
+    res.send(JSON.stringify(response));
   });
+
+  p.kill();
 });

@@ -11,6 +11,7 @@ module.exports = (env, argv) => {
   return {
     mode: prod ? "production" : "development",
     // devtool: prod ? "hidden-source-map" : "eval",
+    // devtool: "inline-source-map",
     devtool: "inline-source-map",
     // 프로그램 엔트리포인트
     entry: "./src/index.tsx",
@@ -23,7 +24,7 @@ module.exports = (env, argv) => {
       // output.path  디렉터리로 내보내는 모든 파일은 output.publicPath 에서 참조됨
       // publicPath: "./",
       // 번들링 될 파일 이름
-      filename: "main.js",
+      filename: "main.js", 
     },
     // 개발용 서버
     // port: 포트

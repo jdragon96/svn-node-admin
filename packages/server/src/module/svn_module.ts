@@ -1,5 +1,6 @@
-import * as Model from "../model/models";
+import * as Model from "../../../shared/model/models";
 
+//! SVN 계정 목록을 조회한다.
 export const parsing_svn_accounts = async(parsing_str: string): Promise<Model.account[]> => {
   var result: Model.account[] = [];
 
@@ -38,4 +39,32 @@ export const parsing_svn_accounts = async(parsing_str: string): Promise<Model.ac
   }
 
   return result;
+}
+
+//! SVN 저장소 목록을 조회한다.
+export const search_svn_repository_list = async(output: string): Promise<Model.svn_list_response> => {
+  
+  var packet: Model.svn_list_response = 
+  {
+    repostiories: []
+  };
+
+  // delete last word
+  var repo_list = output.split("\n");
+
+  // 저장소 이름을 리스트에 저장한다.
+  for(var repo of repo_list)
+  {
+    if(repo === "") continue;
+    packet.repostiories.push({
+      name: repo
+    });
+  }
+
+  return packet;
+}
+
+//! SVN 저장소를 생성한다
+export const create_svn_repository = async() => {
+
 }

@@ -6,6 +6,7 @@ import * as API from "@/interface/svn.api";
 import * as MyListView from "@/shared/component";
 import { GradientButton } from "@/shared/component";
 import { DarkTitleBar } from "@/shared/component";
+import {Model} from "@svn-admin/shared"
 
 import { useEffect, useState } from "react";
 import {
@@ -34,22 +35,15 @@ export const Account = () => {
   const [selectedRepo, setSelectedRepo] = useState<string>("");
 
   useEffect(() => {
-    test();
-    setRepoList(["Repository1", "Repository2", "DDS"]);
+    Initialize();
   }, [])
 
-  const test = async () => {
-    var res = await API.svn_heartbeat();
-    if(res !== null)
-    {
-      var items = res.data.query.split("\n");
-      console.log(items);
-    }    
-
+  const Initialize = async () => {
+    // 1. Repository 목록을 조회한다.
     var repo_list = await API.svn_repository_list();
     if(repo_list !== null)
     {
-      console.log(JSON.parse(repo_list.data.query));
+      // console.log(JSON.parse());
     }
   }
   

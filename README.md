@@ -35,3 +35,6 @@ OPTIONS="-r /var/svn"
 
 /etc/sysconfig/svnserve 파일 수정 
 OPTIONS="--threads -r /home/svn --listen-port 5335"
+
+
+yarn workspace @svn-admin/client add @svn-admin/shared@1.0.0

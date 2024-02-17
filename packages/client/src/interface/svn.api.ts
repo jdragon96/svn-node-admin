@@ -1,8 +1,14 @@
 import axios, {AxiosResponse} from "axios";
+import { Model } from "@svn-admin/shared";
+
 
 // const server_url = "http://localhost:5000"
 const server_url = "http://172.30.1.91:5000"
 
+interface ApiResult
+{
+
+}
 type ApiType = Promise<AxiosResponse<any, any> | null>;
 
 const mysvn = (router: string): string => {
@@ -19,14 +25,14 @@ export const svn_heartbeat = async (): ApiType => {
     // ERROR 
     response = null;
   }
-  
   return response;
 }
 
-export const svn_repository_list = async (): ApiType => {
+export const svn_repository_list = async (): Promise<Model.response_packet<Model.svn_list_response>> => {
   var response: AxiosResponse | null = null;
   try{
     response = await axios.get(mysvn("/svn/list"));
+
   }
   catch(err)
   {
