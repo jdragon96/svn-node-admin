@@ -153,6 +153,7 @@ svn_router.post("/account", async (req: Request, res: Response) => {
         console.log("중복 아이디 조회");
         response.is_success = false;
         response.message = "already exist account";
+        res.send(JSON.stringify(response));
       }
     }
 
