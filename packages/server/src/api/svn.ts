@@ -171,6 +171,8 @@ svn_router.post("/account", async (req: Request, res: Response) => {
         response.message = "fail to insert id...";
       }
       response.message = output;
+      account_list.push({id: query.id, password: query.password});
+      response.body.accounts = account_list;
       res.send(JSON.stringify(response));
     });
   });
