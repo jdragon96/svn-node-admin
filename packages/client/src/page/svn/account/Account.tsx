@@ -89,6 +89,7 @@ export const Account = () => {
       });
     if(result !== null)
     {
+      console.log(result.message);
       if(result.is_success)
       {
         setAccountList(result.body.accounts);

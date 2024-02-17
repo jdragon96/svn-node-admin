@@ -169,6 +169,7 @@ svn_router.post("/account", async (req: Request, res: Response) => {
       response.is_success = false;
       response.message = "fail to insert id...";
     }
+    response.message = output;
   });
   
   res.send(JSON.stringify(response));
