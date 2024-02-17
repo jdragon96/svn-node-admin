@@ -139,40 +139,37 @@ svn_router.post("/account", async (req: Request, res: Response) => {
   }
 
   // 1. 기존 계정 목록을 조회한다.
-  var account_list: Model.account[] = [];
   var p = await process.exec(command, async(err, output) => 
   {
-    console.log(`Repository list : ${output}`);
-    account_list = await SvnModule.parsing_svn_accounts(output);
-  });
-  console.log(`조회 완료 - ${account_list.length}`);
+    var account_list: Model.account[] = await SvnModule.parsing_svn_accounts(output);
 
-  // 2. 중복체크를 한다.
-  for(var account of account_list)
-  {
-    console.log(account.id);
-    if(account.id === query.id)
+    // 2. 중복체크를 한다.
+    console.log(`조회 완료 - ${account_list.length}`);
+    for(var account of account_list)
     {
-      console.log("중복 아이디 조회");
-      response.is_success = false;
-      response.message = "already exist account";
+      console.log(account.id);
+      if(account.id === query.id)
+      {
+        console.log("중복 아이디 조회");
+        response.is_success = false;
+        response.message = "already exist account";
+      }
     }
-  }
 
-  // 3. 추가
-  // 반드시 passwd가 chmod 777로 설정되어야 함
-  command = `echo "${query.id}=${query.password}" | tee -a ${svn_root_path}/${query.repository_name}/conf/passwd`;
-  console.log(command);
-  p = await process.exec(command, async(err, output) => 
-  {
-    if(err)
+    // 3. 추가
+    // 반드시 passwd가 chmod 777로 설정되어야 함
+    command = `echo "${query.id}=${query.password}" | tee -a ${svn_root_path}/${query.repository_name}/conf/passwd`;
+    console.log(command);
+    p = await process.exec(command, async(err, output) => 
     {
-      console.log(`3 ${err.message}`);
-      response.is_success = false;
-      response.message = "fail to insert id...";
-    }
-    response.message = output;
+      if(err)
+      {
+        console.log(`3 ${err.message}`);
+        response.is_success = false;
+        response.message = "fail to insert id...";
+      }
+      response.message = output;
+      res.send(JSON.stringify(response));
+    });
   });
-  
-  res.send(JSON.stringify(response));
 });
