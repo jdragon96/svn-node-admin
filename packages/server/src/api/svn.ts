@@ -51,10 +51,7 @@ svn_router.get("/heartbeat", async (req: Request, res: Response) => {
 //! create new repositoy
 svn_router.get("/create", async (req: Request, res: Response) => {
   var query: Model.svn_create_request = JSON.parse(JSON.stringify(req.query));
-  var command = "svnadmin create --fs-type fsfs " + 
-                  svn_root_path + 
-                  "/" + 
-                  query.repository_name;
+  var command = SvnModule.cmd_create_new_repository(svn_root_path, query.repository_name);
 
   var p = await process.exec(command, (err, output) => 
   {
@@ -79,7 +76,7 @@ svn_router.get("/create", async (req: Request, res: Response) => {
 
 //! find all repository
 svn_router.get("/list", async (req: Request, res: Response) => {
-  var command = "ls " + svn_root_path;
+  var command = SvnModule.cmd_get_repository_list(svn_root_path);
 
   var p = await process.exec(command, async(err, output: string) => 
   {
@@ -98,11 +95,7 @@ svn_router.get("/list", async (req: Request, res: Response) => {
 //! get account list
 svn_router.get("/account", async (req: Request, res: Response) => {
   var query: Model.svn_account_request = JSON.parse(JSON.stringify(req.query));
-  var command = "cat " + 
-                svn_root_path + 
-                "/" + 
-                query.repository_name + 
-                "/conf/passwd";
+  var command = SvnModule.cmd_get_account_list(svn_root_path, query.repository_name);
 
   var p = await process.exec(command, async(err, output) => 
   {
@@ -124,13 +117,7 @@ svn_router.get("/account", async (req: Request, res: Response) => {
 //! add new account
 svn_router.post("/account", async (req: Request, res: Response) => {
   var query: Model.add_acount_request = req.body;
-  console.log(`body : ${req.body}`);
-  console.log(`query : ${req.query}`);
-  var command = "cat " + 
-                svn_root_path + 
-                "/" + 
-                query.repository_name + 
-                "/conf/passwd";
+  var command = SvnModule.cmd_get_account_list(svn_root_path, query.repository_name);
   var response: Model.response_packet<Model.svn_account_response> = 
   {
     is_success: true,
@@ -144,10 +131,8 @@ svn_router.post("/account", async (req: Request, res: Response) => {
     var account_list: Model.account[] = await SvnModule.parsing_svn_accounts(output);
 
     // 2. 중복체크를 한다.
-    console.log(`조회 완료 - ${account_list.length}`);
     for(var account of account_list)
     {
-      console.log(account.id);
       if(account.id === query.id)
       {
         console.log("중복 아이디 조회");
@@ -160,8 +145,7 @@ svn_router.post("/account", async (req: Request, res: Response) => {
 
     // 3. 추가
     // 반드시 passwd가 chmod 777로 설정되어야 함
-    command = `echo "${query.id}=${query.password}" | tee -a ${svn_root_path}/${query.repository_name}/conf/passwd`;
-    console.log(command);
+    command = SvnModule.cmd_append_account(query.id, query.password, svn_root_path, query.repository_name);
     p = await process.exec(command, async(err, output) => 
     {
       if(err)

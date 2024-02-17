@@ -68,3 +68,39 @@ export const search_svn_repository_list = async(output: string): Promise<Model.s
 export const create_svn_repository = async() => {
 
 }
+
+////////////////////////////////////////////////////////////// BASH COMMAND
+
+//! passwd폴더에 계정 정보를 한 줄 추가한다.
+export const cmd_append_account = (
+  id: string, 
+  password: string,
+  svn_root_path: string,
+  svn_repository: string
+) => 
+{
+  return `echo "${id}=${password}" | tee -a ${svn_root_path}/${svn_repository}/conf/passwd`;
+}
+
+//! 계정 정보를 읽어온다.
+export const cmd_get_account_list = (
+  svn_root_path: string,
+  svn_repository: string
+) => 
+{
+  return `cat ${svn_root_path}/${svn_repository}/conf/passwd`;
+}
+
+//! 저장소 목록 조회
+export const cmd_get_repository_list = (svn_root_path: string,) => 
+{
+  return `ls ${svn_root_path}`;
+}
+
+//! 신규 저장소 생성
+export const cmd_create_new_repository = (
+  svn_root_path: string,
+  repository_name: string
+) => {
+  return `svnadmin create --fs-type fsfs ${svn_root_path}/${repository_name}`;
+}
