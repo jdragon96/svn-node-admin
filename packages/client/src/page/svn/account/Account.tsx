@@ -97,9 +97,34 @@ export const Account = () => {
     }
   }
 
+  //! 기존 계정을 제거한다.
+  const onDeleteAccount = async(account: Model.account) => 
+  {
+    var result = await API.delete_account(
+      {
+        repository_name: selectedRepo, 
+        id: account.id,
+        password: account.password
+      });
+    if(result.is_success)
+    {
+      //TODO: 계정삭제 성공에 따른 메세지 전송
+      var filteredAccount = accountList.filter((act: Model.account) => 
+      {
+        return act.id !== account.id;
+      })
+      setAccountList(filteredAccount);
+    }
+    else
+    {
+      //TODO: 계정삭제 실패에 따른 메세지 전송
+    }
+  }
+
   const onSelectRepository = async(repo: string) => {
     console.log(`[Account] 현재 선택된 매뉴 : ${repo}`);
     setSelectedRepo(repo);
+    setAccountList([]);
     var accountList = await API.get_account_list({repository_name: repo});
     if(accountList !== null)
     {
@@ -212,12 +237,39 @@ export const Account = () => {
                         {
                           return (
                             <ListItem>
-                              <Typography>
-                                {item.id}
-                              </Typography>
-                              <Typography>
-                                {item.password}
-                              </Typography>
+                              <Grid container>
+                                <Grid item xs>
+                                  <Grid item>
+                                    {/* ID */}
+                                    <Grid container direction={"row"}>
+                                      <Typography sx={{width: "100px"}}>
+                                        ID
+                                      </Typography>
+                                      <Typography>
+                                        {item.id}
+                                      </Typography>
+                                    </Grid>
+                                    {/* Password */}
+                                    <Grid container direction={"row"}>
+                                      <Typography sx={{width: "100px"}}>
+                                        Password
+                                      </Typography>
+                                      <Typography>
+                                        {item.password}
+                                      </Typography>
+                                    </Grid>
+                                  </Grid>
+                                </Grid>
+                                {/* Delete Button */}
+                                <Grid item>
+                                  <GradientButton 
+                                    fullWidth
+                                    onClick={onCreateNewAccount} 
+                                    sx={{fontSize: '14px', width: "100px", height: "40px", margin: "8px"}}>
+                                      DELETE
+                                  </GradientButton>
+                                </Grid>
+                              </Grid>
                             </ListItem>
                           )
                         })

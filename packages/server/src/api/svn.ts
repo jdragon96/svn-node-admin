@@ -114,6 +114,39 @@ svn_router.get("/account", async (req: Request, res: Response) => {
   });
 });
 
+//! get account list
+svn_router.delete("/account", async (req: Request, res: Response) => {
+  var query: Model.delete_acount_request = JSON.parse(JSON.stringify(req.query));
+  var command = SvnModule.cmd_find_line_number(
+    svn_root_path, 
+    query.repository_name,
+    query.id,
+    query.password);
+  var response: Model.response_packet<boolean> = 
+    {
+      is_success: true,
+      message: "success",
+      body: true
+    };
+
+  var p = await process.exec(command, async(err, output) => 
+  {
+    if(err) {
+      response.is_success = false;
+      res.send(JSON.stringify(response));
+      return;
+    }
+    var num = Number(output.split(":")[0])
+    command = SvnModule.cmd_delete_account(svn_root_path, query.repository_name, num);
+
+    var p = await process.exec(command, async(err, output) => 
+    {
+      if(err) response.is_success = false;
+      res.send(JSON.stringify(response));
+    })
+  });
+});
+
 //! add new account
 svn_router.post("/account", async (req: Request, res: Response) => {
   var query: Model.add_acount_request = req.body;

@@ -16,7 +16,7 @@ cd ..
 yarn add react react-dom
 yarn add react-router-dom
 yarn add -D @types/react @types/react-dom ts-loader typescript source-map-loader
-yarn add -D babel-loader @babel/core 
+yarn add -D babel-loader @babel/core
 yarn add -D @babel/preset-react @babel/preset-env @babel/preset-typescript
 yarn add -D webpack webpack-cli webpack-dev-server
 yarn add -D html-webpack-plugin clean-webpack-plugin
@@ -45,3 +45,15 @@ tsc --init
 yarn add -D webpack-dev-server
 
 ```
+
+
+## 기능
+1. 저장소
+- 목록 조회(O)
+- 삭제
+- 생성
+2. 계정
+- 조회(O)
+- 추가(O)
+- 삭제
+- 변경(Password)

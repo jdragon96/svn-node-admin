@@ -54,8 +54,21 @@ export const get_account_list = async(req: Model.svn_account_request): Promise<M
 
 export const add_new_account = async(req: Model.add_acount_request): Promise<Model.response_packet<Model.svn_account_response>> => {
   try{
-    console.log(req);
     var response = await axios.post(mysvn("/svn/account"), req);
+    return response.data;
+  }
+  catch(err){
+
+  }
+  return null;
+}
+
+export const delete_account = async(req: Model.delete_acount_request): Promise<Model.response_packet<Model.svn_account_response>> => {
+  try{
+    var response = await axios.delete(
+      mysvn(
+        `/svn/account?repository_name=${req.repository_name}&id=${req.id}&password=${req.password}`
+        ));
     return response.data;
   }
   catch(err){

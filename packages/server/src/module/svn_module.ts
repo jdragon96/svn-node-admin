@@ -91,6 +91,29 @@ export const cmd_get_account_list = (
   return `cat ${svn_root_path}/${svn_repository}/conf/passwd`;
 }
 
+//! 특정 라인을 제거한다.
+export const cmd_delete_account = (
+  svn_root_path: string,
+  svn_repository: string,
+  line_number: number
+) => 
+{
+  // https://stackoverflow.com/questions/2112469/delete-specific-line-numbers-from-a-text-file-using-sed
+  return `sed -i.bak -e '${line_number}d' ${svn_root_path}/${svn_repository}/conf/passwd`;
+}
+
+//! 특정 라인을 제거한다.
+export const cmd_find_line_number = (
+  svn_root_path: string,
+  svn_repository: string,
+  id: string,
+  password: string
+) => 
+{
+  // https://stackoverflow.com/questions/16956810/how-to-find-all-files-containing-a-specific-text-string-on-linux
+  return `grep -Rnw '${svn_root_path}/${svn_repository}/conf/passwd' -e '${id}=${password}'`
+}
+
 //! 저장소 목록 조회
 export const cmd_get_repository_list = (svn_root_path: string,) => 
 {

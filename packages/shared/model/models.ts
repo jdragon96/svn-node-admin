@@ -41,3 +41,11 @@ export interface add_acount_request
   id: string
   password: string
 }
+
+//! SVN 계정을 지운다
+export interface delete_acount_request
+{
+  repository_name: string
+  id: string
+  password: string
+}
