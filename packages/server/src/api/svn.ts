@@ -128,6 +128,7 @@ svn_router.delete("/account", async (req: Request, res: Response) => {
       message: "success",
       body: true
     };
+  console.log(command);
 
   var p = await process.exec(command, async(err, output) => 
   {
@@ -136,11 +137,14 @@ svn_router.delete("/account", async (req: Request, res: Response) => {
       res.send(JSON.stringify(response));
       return;
     }
+    console.log(output);
     var num = Number(output.split(":")[0])
     command = SvnModule.cmd_delete_account(svn_root_path, query.repository_name, num);
 
     var p = await process.exec(command, async(err, output) => 
     {
+      console.log(output);
+      console.log(err);
       if(err) response.is_success = false;
       res.send(JSON.stringify(response));
     })

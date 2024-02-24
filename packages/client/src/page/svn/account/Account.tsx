@@ -264,7 +264,7 @@ export const Account = () => {
                                 <Grid item>
                                   <GradientButton 
                                     fullWidth
-                                    onClick={onCreateNewAccount} 
+                                    onClick={() => onDeleteAccount(item)} 
                                     sx={{fontSize: '14px', width: "100px", height: "40px", margin: "8px"}}>
                                       DELETE
                                   </GradientButton>
