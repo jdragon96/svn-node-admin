@@ -125,7 +125,7 @@ export const cmd_create_new_repository = (
   svn_root_path: string,
   repository_name: string
 ) => {
-  return `sudo svnadmin create --fs-type fsfs ${svn_root_path}/${repository_name}`;
+  return `svnadmin create --fs-type fsfs ${svn_root_path}/${repository_name}`;
 }
 
 //! 신규 저장소 생성
