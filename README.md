@@ -39,3 +39,12 @@ OPTIONS="--threads -r /home/svn --listen-port 5335"
 
 yarn workspace @svn-admin/client add @svn-admin/shared@1.0.0
 yarn workspace @svn-admin/server add @svn-admin/shared@1.0.0
+
+## 기능 개발 현황
+### 1. 저장소
+- [x] 저장소 목록 조회
+- [] 저장소 생성
+- [x] 저장소 계정 목록 확인
+- [x] 저장소 계정 추가
+- [x] 저장소 계정 삭제
+- [] 

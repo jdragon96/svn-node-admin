@@ -12,6 +12,7 @@ export interface DarkTitleBarParam
   buttonSize: string
   buttonFontSize: string
   selectedRepository: string
+  removeCallback: (respository_name: string) => void
 }
 export const DarkTitleBar = (param: DarkTitleBarParam) => {
 
@@ -38,7 +39,9 @@ export const DarkTitleBar = (param: DarkTitleBarParam) => {
           </Typography>
         </Grid>
         <Grid item>
-          <GradientButton sx={
+          <GradientButton 
+            onClick={(e) => param.removeCallback(param.selectedRepository)}
+            sx={
             {
               width: param.buttonSize, 
               height: param.buttonSize, 

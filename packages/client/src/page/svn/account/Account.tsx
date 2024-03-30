@@ -2,12 +2,14 @@ import * as Layout from "@/page/layout/MainLayout";
 import * as Style from "@/shared/theme/LayoutStyle";
 import * as Theme from "@/shared/theme/createMyTheme";
 import * as SystemModel from "@/shared/model/SystemModel";
-import * as API from "@/interface/svn.api";
+import * as API from "@/extern_api/svn.api";
 import * as MyListView from "@/shared/component";
 import { GradientButton } from "@/shared/component";
 import { DarkTitleBar } from "@/shared/component";
 import {Model} from "@svn-admin/shared";
 import * as Impl from "./Impl";
+
+import { PopupCreateRepo } from "./PopupCreateRepo";
 
 import { useEffect, useState } from "react";
 import {
@@ -47,6 +49,10 @@ export const Account = () => {
   const [newID, setNewID] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
 
+  //! 저장소 팝업 플레그
+  const [flagCreateRepo, setFlagCreateRepo] = useState<boolean>(false);
+  
+
   useEffect(() => {
     Initialize();
   }, [])
@@ -66,9 +72,61 @@ export const Account = () => {
 
   }
 
-  const onCreateNewRepository = async() => {
+  //! 신규 저장소 생성
+  const onCreateNewRepository = async(repoName: string) => {
     console.log("[Account] 새 계정 등록 버튼 클릭");
-    // TODO: 팝업창 띄우고, 새 저장소 등록
+    var param: Model.svn_create_request = 
+    {
+      repository_name: repoName
+    };
+    var result = await API.create_repository(param);
+    if(result.is_success)
+    {
+      // 저장소 생성 성공
+    }
+    else{
+      // TODO: 저장소 생성 실패
+    }
+  }
+  const closeCreateNewRepoPopup = async() => {
+    setFlagCreateRepo(false);
+  }
+
+  //! 저장소 클릭에 따른 정보 조회(계정 목록)
+  const onSelectRepository = async(repo: string) => {
+    console.log(`[Account] 현재 선택된 매뉴 : ${repo}`);
+    setSelectedRepo(repo);
+    setAccountList([]);
+    var accountList = await API.get_account_list({repository_name: repo});
+    if(accountList !== null)
+    {
+      console.log(`계정 목록 : ${accountList.body.accounts}, 계정 개수 : ${accountList.body.accounts.length}`);
+      accountList.body.accounts.forEach((value, index) => 
+      {
+        console.log(`${value.id} / ${value.password}`);
+        setAccountList(accountList.body.accounts);
+      })
+    }
+  }
+
+  //! 저장소 제거
+  const onDeleteRepository = async(repository_name: string) => {
+    // TODO: Popup 띄워서 다시한번 확인 할 것
+
+    var request: Model.delete_repository_request = 
+    {
+      repository_name: repository_name
+    }
+
+    var result = await API.delete_repository(request);
+    if(result.is_success)
+    {
+      var filteredRepository = repoList.filter((act: Model.repository) => 
+      {
+        return act.name !== repository_name;
+      })
+      setRepoList(filteredRepository);
+    }
   }
 
   //! 새로운 계정을 등록한다.
@@ -100,6 +158,7 @@ export const Account = () => {
   //! 기존 계정을 제거한다.
   const onDeleteAccount = async(account: Model.account) => 
   {
+    console.log("삭제버튼 클릭")
     var result = await API.delete_account(
       {
         repository_name: selectedRepo, 
@@ -121,21 +180,6 @@ export const Account = () => {
     }
   }
 
-  const onSelectRepository = async(repo: string) => {
-    console.log(`[Account] 현재 선택된 매뉴 : ${repo}`);
-    setSelectedRepo(repo);
-    setAccountList([]);
-    var accountList = await API.get_account_list({repository_name: repo});
-    if(accountList !== null)
-    {
-      console.log(`계정 목록 : ${accountList.body.accounts}, 계정 개수 : ${accountList.body.accounts.length}`);
-      accountList.body.accounts.forEach((value, index) => 
-      {
-        console.log(`${value.id} / ${value.password}`);
-        setAccountList(accountList.body.accounts);
-      })
-    }
-  }
 
   return (
     <>
@@ -145,7 +189,10 @@ export const Account = () => {
           <CenterAlignBox sx={{height: "80px"}}>
             <GradientButton 
               fullWidth
-              onClick={onCreateNewRepository} 
+              onClick={(e) => 
+                {
+                  setFlagCreateRepo(true);
+                }} 
               sx={{fontSize: '40px'}}>
                 +
             </GradientButton>
@@ -179,6 +226,7 @@ export const Account = () => {
             {/* 상단 타이틀바 */}
             <Grid item xs={12}>
               <DarkTitleBar
+                removeCallback={onDeleteRepository}
                 buttonSize="80px"
                 buttonFontSize="12px"
                 selectedRepository={selectedRepo}/>
@@ -190,7 +238,7 @@ export const Account = () => {
                 {/* 계정 목록 */}
                 <Grid item>
                   <Typography
-                    sx={{fontSize: "18px"}}>
+                    sx={{fontSize: "18px", fontWeight: "bold", paddingLeft: "4px"}}>
                     계정 설정
                   </Typography>
                   <Grid container xs={12}>
@@ -225,6 +273,10 @@ export const Account = () => {
                       </GradientButton>
                     </Grid>
                   </Grid>
+                  <Typography
+                    sx={{fontSize: "18px", fontWeight: "bold", paddingLeft: "4px"}}>
+                    계정 목록
+                  </Typography>
                   <List
                     sx={
                       {
@@ -264,7 +316,7 @@ export const Account = () => {
                                 <Grid item>
                                   <GradientButton 
                                     fullWidth
-                                    onClick={() => onDeleteAccount(item)} 
+                                    onClick={(e) => onDeleteAccount(item)} 
                                     sx={{fontSize: '14px', width: "100px", height: "40px", margin: "8px"}}>
                                       DELETE
                                   </GradientButton>
@@ -281,6 +333,10 @@ export const Account = () => {
           </Grid>
         </Grid>
       </Grid>
+      <PopupCreateRepo 
+        create_callback={onCreateNewRepository}
+        close_callback={closeCreateNewRepoPopup}
+        isOpen={flagCreateRepo}/>
     </>
   )
 }

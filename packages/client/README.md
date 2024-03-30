@@ -50,10 +50,10 @@ yarn add -D webpack-dev-server
 ## 기능
 1. 저장소
 - 목록 조회(O)
-- 삭제
+- 삭제(O)
 - 생성
 2. 계정
 - 조회(O)
 - 추가(O)
-- 삭제
+- 삭제(O)
 - 변경(Password)

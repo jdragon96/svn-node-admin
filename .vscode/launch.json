@@ -7,7 +7,7 @@
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
+      "name": "Debug Client",
       "url": "http://localhost:5005",
       "webRoot": "${workspaceFolder}/packages/client/src",
       "sourceMaps": true,

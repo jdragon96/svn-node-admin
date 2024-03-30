@@ -47,28 +47,36 @@ svn_router.get("/heartbeat", async (req: Request, res: Response) => {
   });
 });
 
-
 //! create new repositoy
-svn_router.get("/create", async (req: Request, res: Response) => {
-  var query: Model.svn_create_request = JSON.parse(JSON.stringify(req.query));
-  var command = SvnModule.cmd_create_new_repository(svn_root_path, query.repository_name);
+svn_router.delete("/repository", async (req: Request, res: Response) => {
+  var query: Model.delete_repository_request = JSON.parse(JSON.stringify(req.query));
+  var command = SvnModule.cmd_delete_repository(svn_root_path, query.repository_name);
+  var response = create_default_packet<boolean>(true, "success", true);
 
   var p = await process.exec(command, (err, output) => 
   {
-    var response = create_default_packet<string>(err ? true : false, output, output);
-    
-    // error check
-    if(output.length < 1)
-    {
-      response.is_success = true;
-      response.message = "success";
-    }
-    else if (output.indexOf("E165002") < 0)
+    if(err)
     {
       response.is_success = false;
-      response.message = "Already exist repository. please use another name!";
+      response.message = "fail";
     }
+    res.send(response);
+  });
+});
 
+//! create new repositoy
+svn_router.post("/repository", async (req: Request, res: Response) => {
+  var query: Model.svn_create_request = JSON.parse(JSON.stringify(req.body));
+  var command = SvnModule.cmd_create_new_repository(svn_root_path, query.repository_name);
+  var response = create_default_packet<boolean>(true, "success", true);
+
+  console.log(`command : ${command}`);
+  var p = await process.exec(command, (err, output) => 
+  {
+    if(err){
+      response.is_success = false;
+      response.message = "fail";
+    }
     res.send(response);
   });
 });
