@@ -59,6 +59,7 @@ svn_router.delete("/repository", async (req: Request, res: Response) => {
     {
       response.is_success = false;
       response.message = "fail";
+      console.log(`${err.name} : ${err.message}`);
     }
     res.send(response);
   });
